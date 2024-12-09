@@ -47,4 +47,8 @@ variable "minimum-queue-size" {
   default = 0
   
 }
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
 

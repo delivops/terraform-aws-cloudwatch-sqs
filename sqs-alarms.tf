@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_metric_alarm" "sqs-priority-queue-delay-warning" {
   count               = var.oldest_message_enabled ? 1 : 0
-  alarm_name          = "${var.queue_name}-delay-warning"
+  alarm_name          = "SQS | ${var.queue_name} | Priority Queue Delay"
   alarm_description   = "The oldest message in ${var.queue_name} is older than ${var.oldest_message_seconds} seconds"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "15" //for in minutes
@@ -15,10 +15,13 @@ resource "aws_cloudwatch_metric_alarm" "sqs-priority-queue-delay-warning" {
   dimensions = {
     QueueName = var.queue_name
   }
+  tags = merge(var.tags, {
+    Terraform = "true"
+  })
 }
 resource "aws_cloudwatch_metric_alarm" "sqs-in-flight-messages-warning" {
   count               = var.in-flight-messages_enabled ? 1 : 0
-  alarm_name          = "${var.queue_name}-delay-warning"
+  alarm_name          = "SQS | ${var.queue_name} | In-Flight Messages Delay"
   alarm_description   = "There are too much messages in-flight in ${var.queue_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "15" //for in minutes
@@ -33,10 +36,13 @@ resource "aws_cloudwatch_metric_alarm" "sqs-in-flight-messages-warning" {
   dimensions = {
     QueueName = var.queue_name
   }
+  tags = merge(var.tags, {
+    Terraform = "true"
+  })
 }
 resource "aws_cloudwatch_metric_alarm" "sqs-backlog-messages-warning" {
   count               = var.high-backlog-messages_enabled ? 1 : 0
-  alarm_name          = "${var.queue_name}-delay-warning"
+  alarm_name          = "SQS | ${var.queue_name} | Backlog Messages Delay"
   alarm_description   = "Consumer are too slow in ${var.queue_name}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "15" //for in minutes
@@ -51,10 +57,13 @@ resource "aws_cloudwatch_metric_alarm" "sqs-backlog-messages-warning" {
   dimensions = {
     QueueName = var.queue_name
   }
+  tags = merge(var.tags, {
+    Terraform = "true"
+  })
 }
 resource "aws_cloudwatch_metric_alarm" "sqs-minimum-queue-size-warning" {
   count               = var.minimum-queue-size-enabled ? 1 : 0
-  alarm_name          = "${var.queue_name}-delay-warning"
+  alarm_name          = "SQS | ${var.queue_name} | Minimum Queue Size"
   alarm_description   = "The queue ${var.queue_name} is too small, can be provider issue"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = "15" //for in minutes
@@ -69,5 +78,8 @@ resource "aws_cloudwatch_metric_alarm" "sqs-minimum-queue-size-warning" {
   dimensions = {
     QueueName = var.queue_name
   }
+  tags = merge(var.tags, {
+    Terraform = "true"
+  })
 }
 
