@@ -86,6 +86,7 @@ No modules.
 | <a name="input_oldest_message_enabled"></a> [oldest\_message\_enabled](#input\_oldest\_message\_enabled) | n/a | `bool` | `true` | no |
 | <a name="input_oldest_message_seconds"></a> [oldest\_message\_seconds](#input\_oldest\_message\_seconds) | n/a | `number` | `60` | no |
 | <a name="input_queue_name"></a> [queue\_name](#input\_queue\_name) | n/a | `string` | `"my-queue"` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | `{}` | no |
 
 ## Outputs
 
