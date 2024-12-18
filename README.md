@@ -40,7 +40,7 @@ module "sqs_alerts" {
 
 
 
-  aws_sns_topics_arns        = [var.aws_sns_topic_arn]
+  global_sns_topics_arns        = [var.aws_sns_topic_arn]
   queue_name                 = "sqs-1213"
 }
 

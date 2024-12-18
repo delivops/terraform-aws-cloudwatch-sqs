@@ -13,6 +13,6 @@ module "sqs_alerts" {
 
 
 
-  aws_sns_topics_arns = ["arn:aws:sns:eu-west-1:123456789012:sns"]
-  queue_name          = "sqs-1213"
+  global_sns_topics_arns = ["arn:aws:sns:eu-west-1:123456789012:sns"]
+  queue_name             = "sqs-1213"
 }

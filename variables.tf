@@ -1,4 +1,4 @@
-variable "aws_sns_topics_arns" {
+variable "global_sns_topics_arns" {
   type    = list(string)
   default = []
 }
@@ -17,6 +17,12 @@ variable "oldest_message_seconds" {
   default = 60
 
 }
+
+variable "oldest_message_sns_topics_arns" {
+  type    = list(string)
+  default = []
+
+}
 variable "in-flight-messages_enabled" {
   type    = bool
   default = true
@@ -27,25 +33,40 @@ variable "in-flight-messages_counts" {
   default = 100
 
 }
+variable "in-flight-messages_sns_topics_arns" {
+  type    = list(string)
+  default = []
+
+}
 variable "high-backlog-messages_enabled" {
   type    = bool
   default = true
-  
+
 }
 variable "high-backlog-messages_counts" {
   type    = number
   default = 200
-  
+
+}
+variable "high-backlog-messages_sns_topics_arns" {
+  type    = list(string)
+  default = []
+
 }
 variable "minimum-queue-size-enabled" {
   type    = bool
   default = true
-  
+
 }
 variable "minimum-queue-size" {
   type    = number
   default = 0
-  
+
+}
+variable "minimum-queue-size_sns_topics_arns" {
+  type    = list(string)
+  default = []
+
 }
 variable "tags" {
   type    = map(string)
