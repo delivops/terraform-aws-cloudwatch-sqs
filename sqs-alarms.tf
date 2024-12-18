@@ -11,9 +11,9 @@ resource "aws_cloudwatch_metric_alarm" "sqs-priority-queue-delay-warning" {
   statistic                 = "Average"
   threshold                 = var.oldest_message_seconds
   treat_missing_data        = "breaching"
-  alarm_actions             = concat(var.global_sns_topics_arns, var.oldest_message_sns_topics_arns)
-  ok_actions                = concat(var.global_sns_topics_arns, var.oldest_message_sns_topics_arns)
-  insufficient_data_actions = concat(var.global_sns_topics_arns, var.oldest_message_sns_topics_arns)
+  alarm_actions             = concat(var.all_alarms_sns_arns, var.oldest_message_sns_arns)
+  ok_actions                = concat(var.all_alarms_sns_arns, var.oldest_message_sns_arns)
+  insufficient_data_actions = concat(var.all_alarms_sns_arns, var.oldest_message_sns_arns)
 
   dimensions = {
     QueueName = var.queue_name
@@ -36,9 +36,9 @@ resource "aws_cloudwatch_metric_alarm" "sqs-in-flight-messages-warning" {
   statistic                 = "Average"
   threshold                 = var.in-flight-messages_counts
   treat_missing_data        = "breaching"
-  alarm_actions             = concat(var.global_sns_topics_arns, var.in-flight-messages_sns_topics_arns)
-  ok_actions                = concat(var.global_sns_topics_arns, var.in-flight-messages_sns_topics_arns)
-  insufficient_data_actions = concat(var.global_sns_topics_arns, var.in-flight-messages_sns_topics_arns)
+  alarm_actions             = concat(var.all_alarms_sns_arns, var.in-flight-messages_sns_arns)
+  ok_actions                = concat(var.all_alarms_sns_arns, var.in-flight-messages_sns_arns)
+  insufficient_data_actions = concat(var.all_alarms_sns_arns, var.in-flight-messages_sns_arns)
 
   dimensions = {
     QueueName = var.queue_name
@@ -61,9 +61,9 @@ resource "aws_cloudwatch_metric_alarm" "sqs-backlog-messages-warning" {
   statistic                 = "Average"
   threshold                 = var.high-backlog-messages_counts
   treat_missing_data        = "breaching"
-  alarm_actions             = concat(var.global_sns_topics_arns, var.high-backlog-messages_sns_topics_arns)
-  ok_actions                = concat(var.global_sns_topics_arns, var.high-backlog-messages_sns_topics_arns)
-  insufficient_data_actions = concat(var.global_sns_topics_arns, var.high-backlog-messages_sns_topics_arns)
+  alarm_actions             = concat(var.all_alarms_sns_arns, var.high-backlog-messages_sns_arns)
+  ok_actions                = concat(var.all_alarms_sns_arns, var.high-backlog-messages_sns_arns)
+  insufficient_data_actions = concat(var.all_alarms_sns_arns, var.high-backlog-messages_sns_arns)
 
   dimensions = {
     QueueName = var.queue_name
@@ -86,9 +86,9 @@ resource "aws_cloudwatch_metric_alarm" "sqs-minimum-queue-size-warning" {
   statistic                 = "Average"
   threshold                 = var.minimum-queue-size
   treat_missing_data        = "breaching"
-  alarm_actions             = concat(var.global_sns_topics_arns, var.minimum-queue-size_sns_topics_arns)
-  ok_actions                = concat(var.global_sns_topics_arns, var.minimum-queue-size_sns_topics_arns)
-  insufficient_data_actions = concat(var.global_sns_topics_arns, var.minimum-queue-size_sns_topics_arns)
+  alarm_actions             = concat(var.all_alarms_sns_arns, var.minimum-queue-size_sns_arns)
+  ok_actions                = concat(var.all_alarms_sns_arns, var.minimum-queue-size_sns_arns)
+  insufficient_data_actions = concat(var.all_alarms_sns_arns, var.minimum-queue-size_sns_arns)
 
   dimensions = {
     QueueName = var.queue_name

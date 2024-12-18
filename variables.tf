@@ -1,4 +1,4 @@
-variable "global_sns_topics_arns" {
+variable "all_alarms_sns_arns" {
   type    = list(string)
   default = []
 }
@@ -18,7 +18,7 @@ variable "oldest_message_seconds" {
 
 }
 
-variable "oldest_message_sns_topics_arns" {
+variable "oldest_message_sns_arns" {
   type    = list(string)
   default = []
 
@@ -33,7 +33,7 @@ variable "in-flight-messages_counts" {
   default = 100
 
 }
-variable "in-flight-messages_sns_topics_arns" {
+variable "in-flight-messages_sns_arns" {
   type    = list(string)
   default = []
 
@@ -48,7 +48,7 @@ variable "high-backlog-messages_counts" {
   default = 200
 
 }
-variable "high-backlog-messages_sns_topics_arns" {
+variable "high-backlog-messages_sns_arns" {
   type    = list(string)
   default = []
 
@@ -63,7 +63,7 @@ variable "minimum-queue-size" {
   default = 0
 
 }
-variable "minimum-queue-size_sns_topics_arns" {
+variable "minimum-queue-size_sns_arns" {
   type    = list(string)
   default = []
 
