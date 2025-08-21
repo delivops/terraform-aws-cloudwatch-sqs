@@ -9,10 +9,6 @@ resource "aws_sns_topic" "sns_topic" {
 
 module "sqs_alerts" {
   source = "../"
-
-
-
-
-  all_alarms_sns_arns = ["arn:aws:sns:eu-west-1:123456789012:sns"]
+  all_alarms_sns_arns = ["arn:aws:sns:eu-west-1:xxxxxxxx:sns"]
   queue_name          = "sqs-1213"
 }
