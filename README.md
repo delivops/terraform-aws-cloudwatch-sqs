@@ -1,8 +1,8 @@
 [![DelivOps banner](https://raw.githubusercontent.com/delivops/.github/main/images/banner.png?raw=true)](https://delivops.com)
 
-# Terraform-aws-target-group-monitor
+# terraform-aws-cloudwatch-sqs
 
-Terraform-aws-sqs-monitor is a Terraform module for setting up a notification system about cloudwatch metrics.
+Terraform module for setting up CloudWatch alarms on AWS SQS queues.
 
 ## Installation
 
@@ -35,13 +35,15 @@ resource "aws_sns_topic" "sns_topic" {
 }
 
 module "sqs_alerts" {
-  source = "delivops/cloudwatch-sqs/aws"
-  #version            = "0.0.2"
+  source  = "delivops/cloudwatch-sqs/aws"
+  version = "x.x.x"
 
+  queue_name          = "my-app-queue"
+  all_alarms_sns_arns = [var.aws_sns_topic_arn]
 
-
-  all_alarms_sns_arns        = [var.aws_sns_topic_arn]
-  queue_name                 = "sqs-1213"
+  # DLQ alarm — fires the moment any message lands in the dead-letter queue
+  dlq_alarm_enabled = true
+  dlq_name          = "my-app-queue-dlq"
 }
 
 ```
@@ -51,13 +53,13 @@ module "sqs_alerts" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.67.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.67.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.43.0 |
 
 ## Modules
 
@@ -67,32 +69,46 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_cloudwatch_metric_alarm.sqs-backlog-messages-warning](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.sqs-in-flight-messages-warning](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.sqs-minimum-queue-size-warning](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.sqs-priority-queue-delay-warning](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.consumer_silence](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.dlq_depth](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.high_backlog_messages](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.in_flight_messages](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.oldest_message](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.producer_silence](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_all_alarms_sns_arns"></a> [all\_alarms\_sns\_arns](#input\_all\_alarms\_sns\_arns) | n/a | `list(string)` | `[]` | no |
-| <a name="input_high-backlog-messages_counts"></a> [high-backlog-messages\_counts](#input\_high-backlog-messages\_counts) | n/a | `number` | `200` | no |
-| <a name="input_high-backlog-messages_enabled"></a> [high-backlog-messages\_enabled](#input\_high-backlog-messages\_enabled) | n/a | `bool` | `true` | no |
-| <a name="input_high-backlog-messages_sns_arns"></a> [high-backlog-messages\_sns\_arns](#input\_high-backlog-messages\_sns\_arns) | n/a | `list(string)` | `[]` | no |
-| <a name="input_in-flight-messages_counts"></a> [in-flight-messages\_counts](#input\_in-flight-messages\_counts) | n/a | `number` | `100` | no |
-| <a name="input_in-flight-messages_enabled"></a> [in-flight-messages\_enabled](#input\_in-flight-messages\_enabled) | n/a | `bool` | `true` | no |
-| <a name="input_in-flight-messages_sns_arns"></a> [in-flight-messages\_sns\_arns](#input\_in-flight-messages\_sns\_arns) | n/a | `list(string)` | `[]` | no |
-| <a name="input_minimum-queue-size"></a> [minimum-queue-size](#input\_minimum-queue-size) | n/a | `number` | `0` | no |
-| <a name="input_minimum-queue-size-enabled"></a> [minimum-queue-size-enabled](#input\_minimum-queue-size-enabled) | n/a | `bool` | `true` | no |
-| <a name="input_minimum-queue-size_sns_arns"></a> [minimum-queue-size\_sns\_arns](#input\_minimum-queue-size\_sns\_arns) | n/a | `list(string)` | `[]` | no |
-| <a name="input_oldest_message_enabled"></a> [oldest\_message\_enabled](#input\_oldest\_message\_enabled) | n/a | `bool` | `true` | no |
-| <a name="input_oldest_message_seconds"></a> [oldest\_message\_seconds](#input\_oldest\_message\_seconds) | n/a | `number` | `60` | no |
-| <a name="input_oldest_message_sns_arns"></a> [oldest\_message\_sns\_arns](#input\_oldest\_message\_sns\_arns) | n/a | `list(string)` | `[]` | no |
-| <a name="input_queue_name"></a> [queue\_name](#input\_queue\_name) | n/a | `string` | `"my-queue"` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | `{}` | no |
+| <a name="input_all_alarms_sns_arns"></a> [all\_alarms\_sns\_arns](#input\_all\_alarms\_sns\_arns) | A list of SNS topic ARNs to receive all alarm notifications. | `list(string)` | `[]` | no |
+| <a name="input_consumer_silence_enabled"></a> [consumer\_silence\_enabled](#input\_consumer\_silence\_enabled) | Enable alarm when no messages have been deleted from the queue (consumer stopped). | `bool` | `false` | no |
+| <a name="input_consumer_silence_sns_arns"></a> [consumer\_silence\_sns\_arns](#input\_consumer\_silence\_sns\_arns) | Additional SNS topic ARNs for the consumer-silence alarm. | `list(string)` | `[]` | no |
+| <a name="input_dlq_alarm_enabled"></a> [dlq\_alarm\_enabled](#input\_dlq\_alarm\_enabled) | Enable alarm when messages appear in the dead-letter queue. | `bool` | `false` | no |
+| <a name="input_dlq_name"></a> [dlq\_name](#input\_dlq\_name) | The name of the dead-letter queue to monitor. Required when dlq\_alarm\_enabled = true. | `string` | `""` | no |
+| <a name="input_dlq_sns_arns"></a> [dlq\_sns\_arns](#input\_dlq\_sns\_arns) | Additional SNS topic ARNs for the DLQ alarm. | `list(string)` | `[]` | no |
+| <a name="input_dlq_threshold"></a> [dlq\_threshold](#input\_dlq\_threshold) | Number of DLQ messages that triggers the alarm. | `number` | `1` | no |
+| <a name="input_high_backlog_messages_enabled"></a> [high\_backlog\_messages\_enabled](#input\_high\_backlog\_messages\_enabled) | Enable alarm when the number of visible (backlog) messages exceeds the threshold. | `bool` | `true` | no |
+| <a name="input_high_backlog_messages_sns_arns"></a> [high\_backlog\_messages\_sns\_arns](#input\_high\_backlog\_messages\_sns\_arns) | Additional SNS topic ARNs for the backlog-messages alarm. | `list(string)` | `[]` | no |
+| <a name="input_high_backlog_messages_threshold"></a> [high\_backlog\_messages\_threshold](#input\_high\_backlog\_messages\_threshold) | Maximum number of visible messages before the backlog alarm triggers. | `number` | `200` | no |
+| <a name="input_in_flight_messages_enabled"></a> [in\_flight\_messages\_enabled](#input\_in\_flight\_messages\_enabled) | Enable alarm when in-flight (not-visible) message count exceeds the threshold. | `bool` | `true` | no |
+| <a name="input_in_flight_messages_sns_arns"></a> [in\_flight\_messages\_sns\_arns](#input\_in\_flight\_messages\_sns\_arns) | Additional SNS topic ARNs for the in-flight-messages alarm. | `list(string)` | `[]` | no |
+| <a name="input_in_flight_messages_threshold"></a> [in\_flight\_messages\_threshold](#input\_in\_flight\_messages\_threshold) | Maximum number of in-flight messages before the alarm triggers. | `number` | `100` | no |
+| <a name="input_oldest_message_enabled"></a> [oldest\_message\_enabled](#input\_oldest\_message\_enabled) | Enable alarm when the oldest message in the queue exceeds the age threshold. | `bool` | `true` | no |
+| <a name="input_oldest_message_seconds"></a> [oldest\_message\_seconds](#input\_oldest\_message\_seconds) | Age threshold (seconds) for the oldest-message alarm. | `number` | `60` | no |
+| <a name="input_oldest_message_sns_arns"></a> [oldest\_message\_sns\_arns](#input\_oldest\_message\_sns\_arns) | Additional SNS topic ARNs for the oldest-message alarm. | `list(string)` | `[]` | no |
+| <a name="input_producer_silence_enabled"></a> [producer\_silence\_enabled](#input\_producer\_silence\_enabled) | Enable alarm when no messages have been sent to the queue (producer stopped). | `bool` | `false` | no |
+| <a name="input_producer_silence_sns_arns"></a> [producer\_silence\_sns\_arns](#input\_producer\_silence\_sns\_arns) | Additional SNS topic ARNs for the producer-silence alarm. | `list(string)` | `[]` | no |
+| <a name="input_queue_name"></a> [queue\_name](#input\_queue\_name) | The name of the SQS queue to monitor. | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. | `map(string)` | `{}` | no |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_consumer_silence_alarm_arn"></a> [consumer\_silence\_alarm\_arn](#output\_consumer\_silence\_alarm\_arn) | ARN of the consumer-silence alarm (empty string when disabled). |
+| <a name="output_dlq_depth_alarm_arn"></a> [dlq\_depth\_alarm\_arn](#output\_dlq\_depth\_alarm\_arn) | ARN of the DLQ-depth alarm (empty string when disabled). |
+| <a name="output_high_backlog_messages_alarm_arn"></a> [high\_backlog\_messages\_alarm\_arn](#output\_high\_backlog\_messages\_alarm\_arn) | ARN of the backlog-messages alarm (empty string when disabled). |
+| <a name="output_in_flight_messages_alarm_arn"></a> [in\_flight\_messages\_alarm\_arn](#output\_in\_flight\_messages\_alarm\_arn) | ARN of the in-flight-messages alarm (empty string when disabled). |
+| <a name="output_oldest_message_alarm_arn"></a> [oldest\_message\_alarm\_arn](#output\_oldest\_message\_alarm\_arn) | ARN of the oldest-message alarm (empty string when disabled). |
+| <a name="output_producer_silence_alarm_arn"></a> [producer\_silence\_alarm\_arn](#output\_producer\_silence\_alarm\_arn) | ARN of the producer-silence alarm (empty string when disabled). |
 <!-- END_TF_DOCS -->
