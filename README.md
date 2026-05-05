@@ -1,8 +1,8 @@
 [![DelivOps banner](https://raw.githubusercontent.com/delivops/.github/main/images/banner.png?raw=true)](https://delivops.com)
 
-# Terraform-aws-target-group-monitor
+# terraform-aws-cloudwatch-sqs
 
-Terraform-aws-sqs-monitor is a Terraform module for setting up a notification system about cloudwatch metrics.
+Terraform module for setting up CloudWatch alarms on AWS SQS queues.
 
 ## Installation
 
@@ -35,13 +35,15 @@ resource "aws_sns_topic" "sns_topic" {
 }
 
 module "sqs_alerts" {
-  source = "delivops/cloudwatch-sqs/aws"
-  #version            = "0.0.2"
+  source  = "delivops/cloudwatch-sqs/aws"
+  version = "x.x.x"
 
+  queue_name          = "my-app-queue"
+  all_alarms_sns_arns = [var.aws_sns_topic_arn]
 
-
-  all_alarms_sns_arns        = [var.aws_sns_topic_arn]
-  queue_name                 = "sqs-1213"
+  # DLQ alarm — fires the moment any message lands in the dead-letter queue
+  dlq_alarm_enabled = true
+  dlq_name          = "my-app-queue-dlq"
 }
 
 ```
@@ -51,13 +53,13 @@ module "sqs_alerts" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.67.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.67.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0 |
 
 ## Modules
 
