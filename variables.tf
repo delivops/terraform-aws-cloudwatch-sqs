@@ -15,6 +15,20 @@ variable "tags" {
   default     = {}
 }
 
+# ── Evaluation window (shared by all alarms except DLQ) ─────────────────────
+
+variable "period" {
+  description = "Granularity of each evaluation period in seconds (e.g. 60, 300). Applies to all alarms except the DLQ alarm, which is hardcoded to 60 s for immediate detection."
+  type        = number
+  default     = 300
+}
+
+variable "evaluation_periods" {
+  description = "Number of consecutive breaching periods before an alarm fires. Effective window = period × evaluation_periods. Applies to all alarms except the DLQ alarm."
+  type        = number
+  default     = 5
+}
+
 # ── Oldest message (ApproximateAgeOfOldestMessage) ──────────────────────────
 
 variable "oldest_message_enabled" {
